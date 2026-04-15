@@ -1,0 +1,9 @@
+Ini, TOML
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[env]
+NEXT_PUBLIC_BASE_URL = https://otakudesu.cloud/
+NEXT_PUBLIC_API_KEY = 68098233c3985dd3fd7b590fc0bc53
+NEXT_PUBLIC_ABSOLUTE_PATH = https://tutturus.netlify.app/
