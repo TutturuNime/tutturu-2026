@@ -52,21 +52,21 @@ export async function getStaticProps() {
    
     const response = await axios.get(`${path}/api/v1/ongoing?page=1`, {
       next: {
-        revalidate: 1800, 
+        revalidate: 86400, 
         // cache: 'force-cache',
       },
     });
 
     const oplvrz = await axios.get(`${path}/api/v1/ongoing-oploverz?page=1`, {
       next: {
-        revalidate: 1800, 
+        revalidate: 86400, 
         // cache: 'force-cache',
       },
     });
 
     const rec = await axios.get(`${path}/api/v1/rekomen`, {
       next: {
-        revalidate: 1800, 
+        revalidate: 86400, 
         // cache: 'force-cache',
       },
     })
@@ -85,7 +85,7 @@ console.log("________________________");
             rekomen:rec?.data?.rekomen ?? null,
           },
         },
-        revalidate: 60 * 58, // Revalidate every hour (adjust this as needed)
+        revalidate: 60 * 600, // Revalidate every hour (adjust this as needed)
       };
     } else {
       throw new Error('Failed to fetch data');
