@@ -22,12 +22,12 @@ export default function App({ Component, pageProps ,siteInfo}) {
 <Head>
   <link rel="icon" href={logo}></link>
 </Head>
-{/* <ValueProvider siteInfo={siteInfo}>
+<ValueProvider siteInfo={siteInfo}>
       <MainLayout>
            <Component {...pageProps} />
       </MainLayout>
 <MyScript />
-</ValueProvider> */}
+</ValueProvider>
 </ErrorBoundary>
   )
 
@@ -37,10 +37,10 @@ export default function App({ Component, pageProps ,siteInfo}) {
 
 App.getInitialProps = async () => {
   const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
-  // const jadwal = await axios.get(`${path}/api/v1/jadwal`);
-  // ,jadwal:jadwal?.data
+  const jadwal = await axios.get(`${path}/api/v1/jadwal`);
+
   const menu = {
     siteName:"TutturuNime"
   }
-  return {siteInfo : {menu   }  }
+  return {siteInfo : {menu  ,jadwal:jadwal?.data}  }
 };
