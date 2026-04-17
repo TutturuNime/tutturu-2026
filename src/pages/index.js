@@ -85,7 +85,7 @@ console.log("________________________");
             rekomen:rec?.data?.rekomen ?? null,
           },
         },
-        revalidate: 60 * 600, // Revalidate every hour (adjust this as needed)
+        revalidate: 60 * 59, // Revalidate every hour (adjust this as needed)
       };
     } else {
       throw new Error('Failed to fetch data');
