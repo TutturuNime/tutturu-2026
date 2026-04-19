@@ -1,8 +1,21 @@
 import axios from "axios"
 import * as cheerio from 'cheerio';
 
+let cache = {};
+let lastFetch = {};
+
+const CACHE_DURATION = 1000 * 60 * 30; // 30 menit
+
+
 async function getAnimeOngoing(req, res) {
    const page = parseInt(req.query.page)
+   const cacheKey = `ongoing_${page}`;
+  
+   // ✅ cek cache dulu
+   if (cache[cacheKey] && Date.now() - lastFetch[cacheKey] < CACHE_DURATION) {
+     return res.status(200).json(cache[cacheKey]);
+   }
+
     if (req.method === 'GET') {
       try {
         const baseURI = process.env.NEXT_PUBLIC_BASE_URL
@@ -46,7 +59,10 @@ async function getAnimeOngoing(req, res) {
      nextUrl:pagin[1]?.slug.split('/')[1]
      }
 
-   
+          // ✅ simpan ke cache
+          cache[cacheKey] = [ongoing,pagination];
+          lastFetch[cacheKey] = Date.now();
+
   return res.status(200).json({ongoing,pagination})
         }
         return res.status(500).json({ message: 'Something went wrong' });
@@ -59,4 +75,5 @@ async function getAnimeOngoing(req, res) {
   
   export default  getAnimeOngoing;
  
- 
+
+   

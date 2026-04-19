@@ -88,7 +88,7 @@ export async function getStaticProps() {
     const oploverz = await oploverzRes.json();
     const rec = await recRes.json();
  console.log("data");
- console.log(rec);
+ console.log(ongoing);
 console.log("________________________");
     if (ongoingRes.status === 200) {
  
