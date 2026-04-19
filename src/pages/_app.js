@@ -22,12 +22,12 @@ export default function App({ Component, pageProps ,siteInfo}) {
 <Head>
   <link rel="icon" href={logo}></link>
 </Head>
-<ValueProvider siteInfo={siteInfo}>
+{/* <ValueProvider siteInfo={siteInfo}>
       <MainLayout>
            <Component {...pageProps} />
       </MainLayout>
 <MyScript />
-</ValueProvider>
+</ValueProvider> */}
 </ErrorBoundary>
   )
 
@@ -43,8 +43,9 @@ App.getInitialProps = async () => {
     })
   
   const jadwal = await jadwalFetch.json()
-  console.log(jadwalFetch);
+
   // ,jadwal:jadwal?.data
+
   const menu = {
     siteName:"TutturuNime"
   }

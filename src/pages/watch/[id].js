@@ -35,7 +35,8 @@ const  SingleEpisodePage = ({episode,anilist}) => {
    const video = useRef(null)
    const tabsData = TabsComponentDownload(anilist,episode,'episode')
   
- console.log(episode);
+//  console.log(episode);
+//  console.log(anilist);
     return(
 <Fragment>
 <MetaHead title={episode?.epsTitle} description={`Download dan nonton anime ${episode?.epsTitle} Sub indo , Berbagai resolusi ,360p , 480p , 720p , 1080p, MP4 dan MKV Hanya di ${siteInfo?.menus?.globalSeo?.siteName}`} slug={router.asPath} image={!anilist?.bannerImage  ? episode?.thumb : anilist?.bannerImage} />
@@ -119,26 +120,41 @@ export default SingleEpisodePage
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
  
     try {
-      const response = await axios.get(`${path}/api/v1/episode-oploverz?title=${title}`, {
-        next: {
-          revalidate: 10, 
-          cache: 'force-cache',
-        },
-      });
+      // const response = await axios.get(`${path}/api/v1/episode-oploverz?title=${title}`, {
+      //   next: {
+      //     revalidate: 10, 
+      //     cache: 'force-cache',
+      //   },
+      // });
  
-      const epsSlug = response?.data?.nextPrevVideo?.find(text => text.text === "All Episodes")?.link;
-      const epsList = await axios.get(`${path}/api/v1/detail-oploverz?title=${epsSlug}`, {
-        next: {
-          revalidate: 10, 
-          cache: 'force-cache',
-        },
-      });
+      // const epsSlug = response?.data?.nextPrevVideo?.find(text => text.text === "All Episodes")?.link;
+
+      // const epsList = await axios.get(`${path}/api/v1/detail-oploverz?title=${epsSlug}`, {
+      //   next: {
+      //     revalidate: 10, 
+      //     cache: 'force-cache',
+      //   },
+      // });
     
+      const response = await fetch(`${path}/api/v1/episode-oploverz?title=${title}`, {
+          next: { revalidate: 3600 }, // 1 jam cache
+        })
+
+      const ongoingPagination = await response.json()
+   
+      const epsSlug = ongoingPagination?.nextPrevVideo?.find(text => text.text === "All Episodes")?.link;
+
+      const epsList = await fetch(`${path}/api/v1/detail-oploverz?title=${epsSlug}`, {
+        next: { revalidate: 3600 }, // 1 jam cache
+      })
+
+     const episodeList = await epsList.json()
+
       if (response.status === 200) {
-        const aniList = await getAnilistByTitle(response?.data?.originalTitle.trim())
+        const aniList = await getAnilistByTitle(ongoingPagination?.originalTitle.trim())
         const data = {
-          ...response?.data,
-          episodeList:epsList?.data?.linkEpisode
+          ...ongoingPagination,
+          episodeList:episodeList.linkEpisode
         }
    
         return {

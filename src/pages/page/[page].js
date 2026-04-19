@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
     //   },
     // });
  
-    const response = await fetch(`${path}/api/v1/ongoing?page=${page}`, {
+    const response = await fetch(`${path }/api/v1/ongoing-oploverz?page=${page}`, {
       next: { revalidate: 3600 }, // 1 jam cache
     })
     const responseData = await response.json()

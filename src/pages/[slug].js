@@ -122,19 +122,23 @@ export default SingleEpisodePage
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
  
     try {
-      const response = await axios.get(`${path}/api/v1/watch?title=${title}`, {
-        next: {
-          revalidate: 10, 
-          cache: 'force-cache',
-        },
-      });
+      // const response = await axios.get(`${path}/api/v1/watch?title=${title}`, {
+      //   next: {
+      //     revalidate: 10, 
+      //     cache: 'force-cache',
+      //   },
+      // });
  
+      const response = await fetch(`${path}/api/v1/watch?title=${title}`, {
+        next: { revalidate: 3600 }, // 1 jam cache
+      })
  
+      const responseData = await response.json()
     
       if (response.status === 200) {
-        const aniList = await getAnilistByTitle(response?.data?.originalTitle.trim())
+        const aniList = await getAnilistByTitle(responseData?.originalTitle.trim())
         const data = {
-          ...response?.data,
+          ...responseData,
         }
    
         return {
@@ -149,13 +153,13 @@ export default SingleEpisodePage
     } catch (error) {
       console.error('Failed to fetch or parse HTML:', error);
       return {
-       redirect: {
-          destination: '/404', 
-          permanent: false, 
-        }
-        // props:{
+      //  redirect: {
+      //     destination: '/404', 
+      //     permanent: false, 
+      //   }
+        props:{
           
-        // }
+        }
       };
     }
   }
