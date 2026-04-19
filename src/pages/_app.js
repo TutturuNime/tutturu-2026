@@ -16,7 +16,7 @@ export default function App({ Component, pageProps ,siteInfo}) {
   });
 
   const logo = "/img/mayuri.png"
- 
+ console.log(siteInfo);
   return(
 <ErrorBoundary>
 <Head>
@@ -37,10 +37,16 @@ export default function App({ Component, pageProps ,siteInfo}) {
 
 App.getInitialProps = async () => {
   const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
-  const jadwal = await axios.get(`${path}/api/v1/jadwal`);
-
+  // const jadwal = await axios.get(`${path}/api/v1/jadwal`);
+  const jadwalFetch = await fetch(`${path}/api/v1/jadwal`, {
+      next: { revalidate: 3600 }, // 1 jam cache
+    })
+  
+  const jadwal = await jadwalFetch.json()
+  console.log(jadwalFetch);
+  // ,jadwal:jadwal?.data
   const menu = {
     siteName:"TutturuNime"
   }
-  return {siteInfo : {menu  ,jadwal:jadwal?.data}  }
+  return {siteInfo : {menu  ,jadwal:jadwal}  }
 };

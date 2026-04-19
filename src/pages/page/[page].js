@@ -71,19 +71,23 @@ export async function getServerSideProps(context) {
   }
 
   try {
-    const response = await axios.get(`${path }/api/v1/ongoing-oploverz?page=${page}`, {
-      next: {
-        revalidate: 10, 
-        cache: 'force-cache',
-      },
-    });
+    // const response = await axios.get(`${path }/api/v1/ongoing-oploverz?page=${page}`, {
+    //   next: {
+    //     revalidate: 10, 
+    //     cache: 'force-cache',
+    //   },
+    // });
  
+    const response = await fetch(`${path}/api/v1/ongoing?page=${page}`, {
+      next: { revalidate: 3600 }, // 1 jam cache
+    })
+    const responseData = await response.json()
     if (response.status === 200) {
       return {
         props: {
           data:{
-           ongoing:response?.data?.ongoing,
-           pagination:response?.data?.pagination
+            ongoing:responseData?.ongoing,
+            pagination:responseData?.pagination
           }
         },
       };

@@ -50,42 +50,58 @@ export async function getStaticProps() {
   try {
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH;
    
-    const response = await axios.get(`${path}/api/v1/ongoing?page=1`, {
-      next: {
-        revalidate: 86400, 
-        // cache: 'force-cache',
-      },
-    });
+    // const response = await axios.get(`${path}/api/v1/ongoing?page=1`, {
+    //   next: {
+    //     revalidate: 86400, 
+    //     // cache: 'force-cache',
+    //   },
+    // });
 
-    const oplvrz = await axios.get(`${path}/api/v1/ongoing-oploverz?page=1`, {
-      next: {
-        revalidate: 86400, 
-        // cache: 'force-cache',
-      },
-    });
+    // const oplvrz = await axios.get(`${path}/api/v1/ongoing-oploverz?page=1`, {
+    //   next: {
+    //     revalidate: 86400, 
+    //     // cache: 'force-cache',
+    //   },
+    // });
 
-    const rec = await axios.get(`${path}/api/v1/rekomen`, {
-      next: {
-        revalidate: 86400, 
-        // cache: 'force-cache',
-      },
-    })
+    // const rec = await axios.get(`${path}/api/v1/rekomen`, {
+    //   next: {
+    //     revalidate: 86400, 
+    //     // cache: 'force-cache',
+    //   },
+    // })
     
- 
- 
+
+    const [ongoingRes, oploverzRes, recRes] = await Promise.all([
+      fetch(`${path}/api/v1/ongoing?page=1`, {
+        next: { revalidate: 3600 }, // 1 jam cache
+      }),
+      fetch(`${path}/api/v1/ongoing-oploverz?page=1`, {
+        next: { revalidate: 3600 },
+      }),
+      fetch(`${path}/api/v1/rekomen`, {
+        next: { revalidate: 3600 },
+      }),
+    ]);
+
+    const ongoing = await ongoingRes.json();
+    const oploverz = await oploverzRes.json();
+    const rec = await recRes.json();
+ console.log("data");
+ console.log(rec);
 console.log("________________________");
-    if (response.status === 200) {
+    if (ongoingRes.status === 200) {
  
       return {
         props: {
           data: {
-            ongoing: response.data.ongoing,
-            pagination: response.data.pagination,
-            oploverz:oplvrz?.data?.ongoing,
-            rekomen:rec?.data?.rekomen ?? null,
+            ongoing:ongoing.ongoing,
+            pagination:ongoing.pagination,
+            oploverz:oploverz.ongoing,
+            rekomen:rec?.rekomen ?? null,
           },
         },
-        revalidate: 60 * 59, // Revalidate every hour (adjust this as needed)
+        revalidate: 3600, // ISR
       };
     } else {
       throw new Error('Failed to fetch data');
