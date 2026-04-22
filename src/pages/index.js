@@ -12,7 +12,7 @@ import OGPTags from '@/component/layout/header/otg-page';
 export default function Home({data}) {
   const  siteInfo   = useContext(ValueContext)
   const logo = "/img/mayuri.png"
-  console.log(data);
+  // console.log(data);
   return (
 <Fragment>
 <OGPTags />
@@ -88,7 +88,7 @@ export async function getStaticProps() {
     const oploverz = await oploverzRes.json();
     const rec = await recRes.json();
  console.log("data");
- console.log(ongoing);
+ 
 console.log("________________________");
     if (ongoingRes.status === 200) {
  
@@ -101,7 +101,7 @@ console.log("________________________");
             rekomen:rec?.rekomen ?? null,
           },
         },
-        revalidate: 3600, // ISR
+        revalidate: 3590, // ISR
       };
     } else {
       throw new Error('Failed to fetch data');
