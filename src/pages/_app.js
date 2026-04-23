@@ -48,7 +48,7 @@ App.getInitialProps = async () => {
   // console.log(jadwalFetch);
   // ,jadwal:jadwal?.data
   const menu = {
-    siteName:"TutturuNime"
+  
   }
   return {siteInfo : {menu   }  }
 };
