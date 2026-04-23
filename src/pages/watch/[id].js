@@ -14,22 +14,23 @@ import { ValueContext } from "../value-context";
 import { TabsComponentDownload } from "@/lib/tabs-component-download";
 import Alert from "@/component/layout/single-page/alert";
 import Keyword from "@/component/layout/detail/keyword";
+import { getDetailEpisodeOploverz, getEpisodeOploverz } from "@/lib/scrapper-detail-episode-oploverz";
+import { getEpisodeAnime } from "@/lib/scrapper-episode-oploverz";
  
 const { useRouter } = require("next/router")
 
 const  SingleEpisodePage = ({episode,anilist}) => {
   const  siteInfo   = useContext(ValueContext)
  
-
   const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
    const router = useRouter()
    const { query } = router
    const [currentTabs,setCurrentTabs] = useState(0)
+
    const openTabs = (e) => {
      e.preventDefault()
      const name = e.currentTarget.dataset.tabs 
      setCurrentTabs(parseInt(name))
-
    }
 
    const video = useRef(null)
@@ -120,6 +121,7 @@ export default SingleEpisodePage
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
  
     try {
+  
       // const response = await axios.get(`${path}/api/v1/episode-oploverz?title=${title}`, {
       //   next: {
       //     revalidate: 10, 
@@ -136,25 +138,25 @@ export default SingleEpisodePage
       //   },
       // });
     
-      const response = await fetch(`${path}/api/v1/episode-oploverz?title=${title}`, {
-          next: { revalidate: 3600 }, // 1 jam cache
-        })
+      // const response = await fetch(`${path}/api/v1/episode-oploverz?title=${title}`, {
+      //     next: { revalidate: 3600 }, // 1 jam cache
+      //   })
+      // const epsList = await fetch(`${path}/api/v1/detail-oploverz?title=${epsSlug}`, {
+      //   next: { revalidate: 3600 }, // 1 jam cache
+      // })
 
-      const ongoingPagination = await response.json()
+      
+      const ongoingPagination = await getEpisodeAnime(title)
    
       const epsSlug = ongoingPagination?.nextPrevVideo?.find(text => text.text === "All Episodes")?.link;
 
-      const epsList = await fetch(`${path}/api/v1/detail-oploverz?title=${epsSlug}`, {
-        next: { revalidate: 3600 }, // 1 jam cache
-      })
+      const epsList = await getDetailEpisodeOploverz(epsSlug)
 
-     const episodeList = await epsList.json()
-
-      if (response.status === 200) {
+      if (ongoingPagination) {
         const aniList = await getAnilistByTitle(ongoingPagination?.originalTitle.trim())
         const data = {
           ...ongoingPagination,
-          episodeList:episodeList.linkEpisode
+          episodeList: epsList?.linkEpisode
         }
    
         return {
@@ -169,13 +171,13 @@ export default SingleEpisodePage
     } catch (error) {
       console.error('Failed to fetch or parse HTML:', error);
       return {
-       redirect: {
-          destination: '/404', 
-          permanent: false, 
-        }
-        // props:{
+      //  redirect: {
+      //     destination: '/404', 
+      //     permanent: false, 
+      //   }
+        props:{
           
-        // }
+        }
       };
     }
   }

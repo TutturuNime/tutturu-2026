@@ -7,13 +7,15 @@ import { useRouter } from "next/router"
 import { Fragment, useContext, useEffect, useState } from "react";
 import { ValueContext } from "@/pages/value-context";
 import MetaHead from "@/component/layout/header/meta-head";
+import { getGenreAnime } from "@/lib/scrapper-genre";
 
 const PaginationPage = ({data}) => {
   const router = useRouter()
   const { query } =  router
   const [isLoading,setIsLoading] = useState(true)
   const  siteInfo   = useContext(ValueContext)
- 
+  const jadwal = siteInfo?.menus?.jadwal
+
 useEffect(() => {
   if(parseInt(query.page) < 0){
     router.push("/")
@@ -44,7 +46,7 @@ const value = {
    })
   }
 </GridCardContainer>
-<HomeSidebar jadwal={data?.jadwal} />
+<HomeSidebar jadwal={jadwal} />
 </section>
  
 </Fragment>
@@ -59,25 +61,19 @@ export async function getServerSideProps(context) {
   const genre = context.query.genre
   const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
   try {
-    const response = await axios.get(`${path}/api/v1/genre?genre=${genre}&page=${page}`, {
-      next: {
-        revalidate: 10, 
-        cache: 'force-cache',
-      },
-    });
-    const jadwal = await axios.get(`${path}/api/v1/jadwal`, {
-      next: {
-        revalidate: 10, 
-        cache: 'force-cache',
-      },
-    });
-    if (response.status === 200) {
+    // const response = await axios.get(`${path}/api/v1/genre?genre=${genre}&page=${page}`, {
+    //   next: {
+    //     revalidate: 10, 
+    //     cache: 'force-cache',
+    //   },
+    // });
+    const dataGenre = await getGenreAnime(genre,page)
+    if (dataGenre ) {
       return {
         props: {
          data:{
-          genre:response.data?.genreAnime,
-          jadwal:jadwal.data,
-          pagination:response.data.pagination
+          genre:dataGenre ?.genreAnime,
+          pagination:dataGenre.pagination
          }  
         },
       };

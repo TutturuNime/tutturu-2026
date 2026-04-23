@@ -6,14 +6,17 @@ import axios from "axios"
 import { Fragment, useContext, useEffect, useState } from "react";
 import { ValueContext } from "../value-context";
 import MetaHead from "@/component/layout/header/meta-head";
+import { getGenreAnime } from "@/lib/scrapper-genre";
  
 const { useRouter } = require("next/router")
 
 const SingleAnimePage = ({data}) => {
+
    const { query } = useRouter()
    const [isLoading,setIsLoading] = useState(true)
    const  siteInfo   = useContext(ValueContext)
- 
+   const jadwal = siteInfo?.menus?.jadwal
+
    useEffect(() => {
      if(data){
        setIsLoading(false)
@@ -28,7 +31,7 @@ console.log(query.page);
   hide:false,
   type:'genre'
  } 
- console.log(data);
+//  console.log(data);
     return(
  <Fragment>
     <MetaHead  title={`Genre: ${query.genre} - ${siteInfo?.menus?.globalSeo?.siteName}`} description={`Halaman hasil pencarian untuk genrer  ${query.genrez}`} />
@@ -41,7 +44,7 @@ console.log(query.page);
    })
   }
 </GridCardContainer>
-<HomeSidebar jadwal={data?.jadwal} />
+<HomeSidebar jadwal={jadwal} />
 </section>
  </Fragment>
     )
@@ -53,25 +56,22 @@ export async function getServerSideProps(context) {
     const genre = context.query.genre
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
     try {
-      const response = await axios.get(`${path}/api/v1/genre?genre=${genre}&page=1`, {
-        next: {
-          revalidate: 10, 
-          cache: 'force-cache',
-        },
-      });
-      const jadwal = await axios.get(`${path}/api/v1/jadwal`, {
-        next: {
-          revalidate: 10, 
-          cache: 'force-cache',
-        },
-      });
-      if (response.status === 200) {
+     
+      const dataGenre = await getGenreAnime(genre,1)
+   
+      // const response = await axios.get(`${path}/api/v1/genre?genre=${genre}&page=1`, {
+      //   next: {
+      //     revalidate: 10, 
+      //     cache: 'force-cache',
+      //   },
+      // });
+
+      if (dataGenre) {
         return {
           props: {
             data:{
-              genre:response.data?.genreAnime,
-              jadwal:jadwal.data,
-              pagination:response.data.pagination
+              genre:dataGenre?.genreAnime,
+              pagination:dataGenre.pagination
             }
           },
         };

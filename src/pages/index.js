@@ -7,6 +7,9 @@ import HomepageBanner from '@/component/layout/home/homepage-banner';
 import HomePage from '@/component/layout/home/homepage';
 import { NextSeo } from 'next-seo';
 import OGPTags from '@/component/layout/header/otg-page';
+import { getOngoing } from '@/lib/scrapper-ongoing';
+import { getAnimeOngoingOplovers } from '@/lib/scrapper-ongoing-oploverz';
+import { getRekomen } from '@/lib/scrapper-rekomen';
 
 
 export default function Home({data}) {
@@ -49,7 +52,9 @@ export default function Home({data}) {
 export async function getStaticProps() {
   try {
     const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH;
-   
+    const dats = await getOngoing(1)
+    const oploverz = await getAnimeOngoingOplovers(1)
+    const rek = await getRekomen()
     // const response = await axios.get(`${path}/api/v1/ongoing?page=1`, {
     //   next: {
     //     revalidate: 86400, 
@@ -72,21 +77,21 @@ export async function getStaticProps() {
     // })
     
 
-    const [ongoingRes, oploverzRes, recRes] = await Promise.all([
+    const [ongoingRes ] = await Promise.all([
       fetch(`${path}/api/v1/ongoing?page=1`, {
         next: { revalidate: 3600 }, // 1 jam cache
       }),
-      fetch(`${path}/api/v1/ongoing-oploverz?page=1`, {
-        next: { revalidate: 3600 },
-      }),
-      fetch(`${path}/api/v1/rekomen`, {
-        next: { revalidate: 3600 },
-      }),
+      // fetch(`${path}/api/v1/ongoing-oploverz?page=1`, {
+      //   next: { revalidate: 3600 },
+      // }),
+      // fetch(`${path}/api/v1/rekomen`, {
+      //   next: { revalidate: 3600 },
+      // }),
     ]);
 
     const ongoing = await ongoingRes.json();
-    const oploverz = await oploverzRes.json();
-    const rec = await recRes.json();
+    //  const oplovers = await oploverzRes.json();
+    // const rec = await recRes.json();
  console.log("data");
  
 console.log("________________________");
@@ -95,13 +100,13 @@ console.log("________________________");
       return {
         props: {
           data: {
-            ongoing:ongoing.ongoing,
+            ongoing:dats?.ongoing,
             pagination:ongoing.pagination,
-            oploverz:oploverz.ongoing,
-            rekomen:rec?.rekomen ?? null,
+            oploverz:oploverz?.ongoing,
+            rekomen:rek?.rekomen ?? null,
           },
         },
-        revalidate: 60 * 59, // ISR
+        revalidate: 60 * 60, // ISR
       };
     } else {
       throw new Error('Failed to fetch data');

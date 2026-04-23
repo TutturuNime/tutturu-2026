@@ -33,7 +33,6 @@ async function getAnimeOngoing(req, res) {
   const ongoing = []
   const pagin = []
  
-
   page.find('.bsx').each((index,el) => {
      ongoing.push(
       {
@@ -53,17 +52,21 @@ async function getAnimeOngoing(req, res) {
        })
      })
  
-     const pagination = {
-      pagin,
-     prevUrl:pagin[0]?.slug.split('/')[1],
-     nextUrl:pagin[1]?.slug.split('/')[1]
-     }
-
+ 
           // ✅ simpan ke cache
-          cache[cacheKey] = [ongoing,pagination];
+          const result = {
+            ongoing,
+            pagination: {
+              pagin,
+              prevUrl: pagin[0]?.slug?.split("/")[1],
+              nextUrl: pagin[1]?.slug?.split("/")[1],
+            },
+          };
+      
+          cache[cacheKey] = result;
           lastFetch[cacheKey] = Date.now();
 
-  return res.status(200).json({ongoing,pagination})
+  return res.status(200).json(result)
         }
         return res.status(500).json({ message: 'Something went wrong' });
       } catch (error) {

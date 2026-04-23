@@ -30,8 +30,8 @@ const ModalSearch = ({isOpen,openSearchModal}) => {
     setSearchValue("")
    }
 
-   console.log(searchValue);
-   console.log(searchValue.length);
+//    console.log(searchValue);
+//    console.log(searchValue.length);
     return(
 <div id="select-modal" tabindex="-1" aria-hidden="true" className={`fixed top-0 left-0 right-0 bottom-0 z-30 bg-black bg-opacity-75 transition duration-250 font-roboto ${isOpen ? '' : 'hidden'}`} onClick={openSearchModal}>
 <div class="relative sm:p-4 p-2 w-full m-auto max-w-2xl max-h-full mt-28">

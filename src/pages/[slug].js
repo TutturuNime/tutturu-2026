@@ -14,6 +14,7 @@ import AnimeCard from "@/component/layout/post/anime-card";
 import { TabsComponentWatch } from "@/lib/tab-component-watch";
 import Alert from "@/component/layout/single-page/alert";
 import Keyword from "@/component/layout/detail/keyword";
+import { getEpisodeWatchAnime } from "@/lib/scrapper-watch";
  
 
  
@@ -119,8 +120,8 @@ export default SingleEpisodePage
  
   export async function getServerSideProps(context) {
     const title = context.query.slug
-    const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
- 
+    // const path = process.env.NEXT_PUBLIC_ABSOLUTE_PATH
+    const dataWatchAnime = await getEpisodeWatchAnime(title)
     try {
       // const response = await axios.get(`${path}/api/v1/watch?title=${title}`, {
       //   next: {
@@ -129,16 +130,16 @@ export default SingleEpisodePage
       //   },
       // });
  
-      const response = await fetch(`${path}/api/v1/watch?title=${title}`, {
-        next: { revalidate: 3600 }, // 1 jam cache
-      })
+      // const response = await fetch(`${path}/api/v1/watch?title=${title}`, {
+      //   next: { revalidate: 3600 }, // 1 jam cache
+      // })
  
-      const responseData = await response.json()
-    
-      if (response.status === 200) {
-        const aniList = await getAnilistByTitle(responseData?.originalTitle.trim())
+      // const responseData = await response.json()
+ 
+      if (dataWatchAnime) {
+        const aniList = await getAnilistByTitle(dataWatchAnime?.originalTitle.trim())
         const data = {
-          ...responseData,
+          ...dataWatchAnime,
         }
    
         return {

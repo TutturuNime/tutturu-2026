@@ -4,6 +4,7 @@ const nextConfig = {
   optimizeFonts: true,
   compress: true,  
   reactStrictMode: true,
+  cacheComponents: true,
   images: {
     unoptimized: true,
   },
