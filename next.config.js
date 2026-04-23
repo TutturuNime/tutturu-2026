@@ -8,9 +8,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-
-    ppr: true, // or 'incremental'
-    rscPrefetch: true, // Add this line
+  experimental: {
+    ppr: false, // ⛔ matikan
+  },
 }
 
 module.exports = nextConfig
